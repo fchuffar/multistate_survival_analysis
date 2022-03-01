@@ -1,6 +1,6 @@
 ---
 title: "sensitivity analysis on models"
-author: "Shuyu, Marame, Kevin, Théo, Florence, Florent"
+author: "Marame Diagne, Kevin McKenna, Florence Pittion, Théo Silvestre, Shuyu Wang, Adeline Leclercq Samson et Florent Chuffart"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_document:
