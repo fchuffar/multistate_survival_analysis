@@ -1,0 +1,73 @@
+---
+title: "Etude compléte de l'influence du `stage` sur les données TCGA"
+author: "Shuyu, Marame, Kevin, Théo, Florence, Florent"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    number_sections: true
+---
+  
+```{r setup1, include=FALSE}
+knitr::opts_chunk$set(collapse=TRUE, comment = "#>", fig.width=9, fig.height=6, eval=TRUE, echo=FALSE, results="hide")
+source("../R/common.R")
+data = openxlsx::read.xlsx("../data/TCGA-CDR-SupplementalTableS1.xlsx", sheet = "TCGA-CDR", na.strings="#N/A")
+```
+
+
+```{r synthesis, eval=TRUE}
+d = dfnew_creation(data)
+kcs = rev(names(sort(table(d$type))))
+kcs = kcs[!kcs%in%c("LIHC", "TGCT", "ACC", "DLBC")]
+table(data$type)
+results_glo = lapply(kcs, function(kc) {
+  print(kc)
+  rmarkdown::render("04_full_kc_stage_study.Rmd", output_file=paste0("full_", kc, "_stage_study.html"))
+  return(list(res=results_glo, p=p))
+})
+
+foo = do.call(rbind, lapply(results_glo, "[[", "res"))
+WriteXLS::WriteXLS(foo, "global_hrs.xlsx", row.names=TRUE, FreezeRow=1, FreezeCol=1)
+
+foo = data.frame(do.call(rbind, lapply(results_glo, "[[", "p")))
+rownames(foo) = kcs
+WriteXLS::WriteXLS(foo, "global_sim_params.xlsx", row.names=TRUE, FreezeRow=1, FreezeCol=1)
+
+foo = do.call(rbind, lapply(results_glo, "[[", "res"))
+
+layout(matrix(1:2,1), respect=TRUE)
+for (kc in kcs) {
+  results = foo[foo$type==kc, ]
+  plot_hrs(results, main=results$type[1])
+  results_simu = foo[foo$type==paste0(kc, "_simu"), ]
+  plot_hrs(results_simu, main=results_simu$type[1])  
+}
+```
+
+
+# Session Information
+
+```{r session, results="verbatim"}
+sessionInfo()
+date()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
